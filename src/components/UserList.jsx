@@ -6,9 +6,22 @@ const UserList = () => {
   const { users, fetchUsers, deleteUser, updateUser, loading } = useUserStore()
   const [editName, setEditName] = useState({})
 
+  // ✅ Load from localStorage first
   useEffect(() => {
-    fetchUsers()
+    const localUsers = JSON.parse(localStorage.getItem('users'))
+    if (localUsers && localUsers.length > 0) {
+      useUserStore.setState({ users: localUsers })
+    } else {
+      fetchUsers()
+    }
   }, [fetchUsers])
+
+  // ✅ Save to localStorage when users change
+  useEffect(() => {
+    if (users?.length > 0) {
+      localStorage.setItem('users', JSON.stringify(users))
+    }
+  }, [users])
 
   if (loading) return <p className="user-list-title">Loading...</p>
 
